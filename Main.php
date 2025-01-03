@@ -1,3 +1,60 @@
+<?php
+// Dados de conexão com o banco de dados
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome do banco de dados
+
+// Criando a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificando a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+
+// Verificar se o formulário foi enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verificar se as variáveis POST estão definidas
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        // Consultar o banco de dados para encontrar o usuário com o email fornecido
+        $sql = "SELECT * FROM Login WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email); // Bind para o email
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Verificar se o usuário existe
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            // Comparar a senha
+            if ($user['password'] === $password) {
+                // Login bem-sucedido
+                echo json_encode(['success' => true, 'message' => 'Bem-vindo!']);
+            } else {
+                // Senha incorreta
+                echo json_encode(['success' => false, 'message' => 'Dados incorretos']);
+            }
+        } else {
+            // Usuario não encontrado
+            echo json_encode(['success' => false, 'message' => 'Dados incorretos']);
+        }
+
+        $stmt->close();
+    } else {
+        // Se os campos não forem preenchidos corretamente
+        echo json_encode(['success' => false, 'message' => 'Por favor, preencha todos os campos.']);
+    }
+}
+
+$conn->close();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,14 +165,15 @@
   </div>
 </nav>
 
-<div class="loginModal hidden">
+<!--<div class="loginModal hidden">
   <div class="topBox">
     <h5 class="title">Log In</h5>
+    <a href="signIn.php">New Here SigIn</a>
   </div>
   <hr>
   <div class="content">
     <div class="contact-item">
-    <form>
+    <form id="loginForm">
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
@@ -128,8 +186,34 @@
     </form>
     </div>
   </div>
-</div>
-</div>
+</div>-->
+
+<form method="POST" action="Main.php" id="loginForm">
+    <div class="loginModal hidden" id="loginModal">
+        <div class="topBox">
+            <h5 class="title">Log In</h5>
+            <a href="signIn.php">New Here Sign In</a>
+        </div>
+        <hr>
+        <div class="content">
+            <div class="contact-item">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="submitButton">Login</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+
 <!--Carousel-->
 <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2000">
   <div class="carousel-inner">
@@ -282,14 +366,12 @@
 </footer>
 <script src="Js/jsScript.js"></script>
 <script>
-/*window.addEventListener('load', function() {
-            setTimeout(function() {
-                loginModal.classList.remove('hidden');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }, 3000); // 3000ms = 3 segundos
-        });
-*/
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.getElementById('loginModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }, 3000);
+});
 </script>
 
 </body>
