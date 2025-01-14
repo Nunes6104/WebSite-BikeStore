@@ -1,18 +1,40 @@
 <?php
-session_start();
-// Verifica se o utilizador está autenticado
-if (!isset($_SESSION['user_id'])) {
-    // Se não estiver autenticado, redireciona para o login (index.php)
-    header("Location: index.php");
-    exit();
+// Dados de conexão com o banco de dados
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome do banco de dados
+
+// Criando a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Verificando a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
 }
+
+$idBike = 5; // Definição fixa do ID Bikes
+// Recolhe informação da base de dados
+$sql = "SELECT * FROM Bikes WHERE idBike = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $idBike);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $bike = $result->fetch_assoc();
+} else {
+    echo "Bicicleta não encontrada.";
+}
+$name = $bike['name'];
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motion Bikes</title>
+    <title>BH LYNX Race</title>
     <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
@@ -131,68 +153,192 @@ if (!isset($_SESSION['user_id'])) {
   </div>
 </nav>
 
-<!--Carousel-->
-<div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2000">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="img/banner1.jpeg" class="d-block w-100" alt="Imagem 1">
-    </div>
-    <div class="carousel-item">
-      <img src="img/banner2.jpeg" class="d-block w-100" alt="Imagem 2">
-    </div>
-    <div class="carousel-item">
-      <img src="img/banner3.jpeg" class="d-block w-100" alt="Imagem 3">
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
-
-<!--Cards-->
-<h2 class="m-2">Popular Sellers</h2>
-<div class="container">
-  <div class="row" style="padding-top: 5%; padding-bottom: 5%;">
-    <div class="col-md-4 mb-4">
-      <div class="card" style="width: 100%;">
-        <img src="https://bhbikes.b-cdn.net/cache/general/fe3c5c/lt805_rcr_n1.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">AERO TT 8.0</h5>
-          <p class="card-text">Price: 9.199,90 €</p>
-          <a href="BH-AEROTT.php" class="btn btn-primary">Have a Look</a>
+<div class="row g-0 bg-body-secondary position-relative">
+    <div class="col-md-6 mb-md-0 p-md-4">
+        <div id="carouselExampleDark" class="carousel carousel-dark slide img-fluid" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="10000">
+                    <img src="https://bhbikes.b-cdn.net/cache/general/65eb8c/dx754_nwo_n1.jpg" class="d-block w-100 rounded-1" alt="...">
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="https://bhbikes.b-cdn.net/cache/general/46e423/dx754_nsb_n1.jpg" class="d-block w-100 rounded-1" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://bhbikes.b-cdn.net/cache/general/acd617/dx754_nss_n1.jpg" class="d-block w-100 rounded-1" alt="...">
+                </div>
+            </div>
+            <!-- Controles do Carousel -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-      </div>
     </div>
- 
 
-    <div class="col-md-4 mb-4">
-      <div class="card" style="width: 100%;">
-        <img src="//us.bmc-switzerland.com/cdn/shop/files/f4e0d977-3c3c-42fd-9e94-1055a15c657f_1800x1800.jpg?v=1731409225" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Kaius 01 THREE</h5>
-          <p class="card-text">Price: 6.700,00 €</p>
-          <a href="BMC-Kaius.php" class="btn btn-primary">Have a Look</a>
+    <div class="col-md-6 p-4 ps-md-0">
+        <h3 class="mt-0 mt-2"><?= $name ?></h3>
+        <div class="d-flex flex-wrap align-items-center gap-4 ms-2 mt-4">
+          <div class="price-section">
+            <h3><strong>9.200,00 €</strong></h3>
+          </div>
+
+        <form method="POST" action="Cart.php" class="d-flex flex-column flex-md-row align-items-center gap-2 mb-2">
+            <input type="hidden" name="idBike" value="<?= $idBike ?>">
+
+            <!-- Campo para selecionar a quantidade -->
+            <input 
+                type="number" 
+                name="quantidade" 
+                value="1" 
+                min="1" 
+                class="form-control w-auto text-center" 
+                style="max-width: 80px;" 
+            >
+
+            <!-- Botão de Adicionar ao Carrinho -->
+            <button type="submit" class="btn btn-outline-success" name="add_to_cart">
+                <i class="ph ph-shopping-cart"></i>ADD TO CART</button>
+        </form>
+
+        <!-- Offcanvas Melhorado -->
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+            <div class="offcanvas-header">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA5UlEQVR4nN2UsQ7BUBSGPwsGAxEziweQiGdQEpNX8QzSd5B0EJ7AKGG3moytCSPBQKXJGZpI6tzmVsKX3O075z+3PS38C08glONlEfCIBdyAGhmxiAWlPaukgJ6FgG1SQA7YiRiFaSkDR6kbfJJHIkaPS4srNWuNXAEusllNhd8AruK3tRN5MpGrcOfiTjGgJUUnoJjgdWTy6AZ1DNkYbM7YtHkVOCgaR5PPgIJpwEQaLGV1rVKS38VduUXG5IFzyq9YzVD5DsK0AZnTB/ZAADgWvDeC2LV9C973Axwp9oGuBe+HeQGdhY4nafPkOQAAAABJRU5ErkJggg==" alt="Logo">
+                <h4 class="offcanvas-title" id="offcanvasExampleLabel"><strong>Cart</strong></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <hr>
+            <div class="offcanvas-body m-2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="//thumb.pccomponentes.com/w-530-530/articles/1073/10739332/1318-gigabyte-geforce-rtx-4060-eagle-oc-8gb-gddr6-dlss3.jpg" class="img-thumbnail shadow-lg" alt="Gigabyte GeForce RTX 4060 EAGLE OC 8GB">
+                    </div>
+                    <div class="col-md-8 d-flex align-items-center">
+                        <br><a class="text-danger link-underline link-underline-opacity-0" href="Gigabyte GeForce RTX 4060 EAGLE OC 8GB.html">Gigabyte GeForce RTX 4060 EAGLE OC 8GB</a>
+                    </div>
+                    <div class="col-md-10 text-center">
+                        <br>
+                        <h5>Price - 365,90 €</h5>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div class="m-4">
+                <a id="myButton234" class="btn btn-outline-success" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-check-fill" viewBox="0 0 16 16">
+                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708z"></path>
+                    </svg> Buy now!!
+                </a>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="col-md-4 mb-4">
-      <div class="card" style="width: 100%;">
-        <img src="//us.bmc-switzerland.com/cdn/shop/files/f57dd3fa-7204-4d93-b145-7bb155d60430_1800x1800.jpg?v=1702543648" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Alpenchallenge AL ONE</h5>
-          <p class="card-text">Price: 2.000,00€</p>
-          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Have a Look</a>
+        <!-- Accordion Ajustado -->
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button btn btn-dark focus-ring focus-ring-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Details
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body overflow-auto">
+                        <p><strong>Key Features</strong></p>
+                        <p>Always fast. On short distances. On long distances. On trails. On experimental roads. Climbing. Descending the mountain. That’s what you seek in a dual XC and marathon bike. The frame #1 for the World Championship with David Valero and BH Coloma Team.</p>
+                    </div>
+                </div>
+            <!-- Mais Seções do Accordion -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed btn btn-dark focus-ring focus-ring-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Tecnical Information
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body overflow-auto">
+                        <p><strong>Frame</strong></p> 
+                        <p>Aerolight Disc ACR Carbon Monocoque</p>
+                        <hr>
+                        <p><strong>Fork</strong></p>
+                        <p>Aerolight, Integrated Tapered Full Carbon 1.5"</p>
+                        <hr>
+                        <p><strong>Drivetrain</strong></p>  
+                        <p><strong>Shifters</strong></p> 
+                        <p>Shimano Ultegra DI2 Hydra</p>  
+                        <p><strong>Rear Derailleur</strong></p>
+                        <p>Shimano Ultegra DI2 8150 12sp</p>
+                        <p><strong>Front Derailleur</strong></p>
+                        <p>Shimano Ultegra DI2 8150</p>
+                        <p><strong>Crankset</strong></p>
+                        <p>Shimano Ultegra FCR8100 52/36</p>
+                        <p><strong>Cassette</strong></p>
+                        <p>Shimano Ultegra 11/34</p>
+                        <p><strong>Chain</strong></p>
+                        <p>Shimano Ultegra</p>
+                        <hr>
+                        <p><strong>Brakes</strong></p>
+                        <p><strong>Front Brake</strong></p>
+                        <p>Shimano Ultegra Hydraulic</p>
+                        <p><strong>Rear Brake</strong></p>
+                        <p>Shimano Ultegra Hydraulic</p>
+                        <hr>
+                        <p><strong>Wheelset</strong></p>
+                        <p>Vision SC60</p>
+                        <hr>
+                        <p><strong>Tires</strong></p>
+                        <p>Pirelli Pzero Race 700x28</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed btn btn-dark focus-ring focus-ring-secondary"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                        aria-expanded="false" aria-controls="collapseThree">
+                        Reviews
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body overflow-auto">
+                        <strong>Top Reviews</strong>
+                        <p></p>
+                        <p>
+                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
+                                alt="user-male-circle" />
+                            <strong>Kevin</strong> : I would say for anyone who is building, definitely look into
+                            these gpu's!! The one I brought let me play any game FLAWLESSLY with 0 lag and around
+                            200-160 fps which isn’t too shabby considering the monitor I use most has only 144 hz.
+                        </p>
+
+                        <hr>
+                        <p>
+                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
+                                alt="user-male-circle" />
+                            <strong>Anthony</strong> : fast shipping, i upgraded to this from an Asus phoenix 3050
+                            oc and its a world of difference! runs really well, much cooler than my previous gpu.
+                            would recommend
+                        </p>
+
+                        <hr>
+                        <p>
+                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
+                                alt="user-male-circle" />
+                            <strong>LeoFer</strong> : fast shipping, met my expectations fully. I was replacing a
+                            2070 card that appeared overwhelmed by newer gaming requirements and was degrading game
+                            performance. The change solved my issues as expected. The price was good and delivery on
+                            time.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+        </div>
     </div>
-
-  </div>
 </div>
 
 <footer> 

@@ -1,14 +1,32 @@
+<?php
+// Dados de conexão com o banco de dados
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome do banco de dados
+
+// Criando a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificando a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Bikes</title>
-  <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Bikes</title>
+    <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -122,8 +140,80 @@
   </div>
 </nav>
 
-<!--Maps-->
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.79226558486!2d-9.162591388795233!3d38.76846837163416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932edd62bb521%3A0x1ee0de4e32108704!2sISTEC%20-%20Instituto%20Superior%20de%20Tecnologias%20Avan%C3%A7adas!5e0!3m2!1spt-PT!2spt!4v1732964831851!5m2!1spt-PT!2spt" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<!--Cards-->
+<div class="container">
+  <div class="row" style="padding-top: 5%; padding-bottom: 5%;">
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="//us.bmc-switzerland.com/cdn/shop/files/c5ab38ee-1c60-42c8-aa49-2a04da2b005d_1800x1800.jpg?v=1730804439" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Speedmachine 01 ONE</h5>
+          <p class="card-text">Price: 17.000,00 €</p>
+          <a href="BMC-Speedmachine.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="//us.bmc-switzerland.com/cdn/shop/files/24521dfd-ad61-4485-a163-2ad2c5598a63_1800x1800.jpg?v=1721311255" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">URS 01 THREE</h5>
+          <p class="card-text">Price: 7.900,00 €</p>
+          <a href="BMC-URS.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="//us.bmc-switzerland.com/cdn/shop/files/f4e0d977-3c3c-42fd-9e94-1055a15c657f_1800x1800.jpg?v=1731409225" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Kaius 01 THREE</h5>
+          <p class="card-text">Price: 6.700,00 €</p>
+          <a href="BMC-Kaius.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="//us.bmc-switzerland.com/cdn/shop/files/f57dd3fa-7204-4d93-b145-7bb155d60430_1800x1800.jpg?v=1702543648" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Alpenchallenge AL ONE</h5>
+          <p class="card-text">Price: 2.000,00€</p>
+          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="//us.bmc-switzerland.com/cdn/shop/files/6c91f175-e111-4551-987f-4a57bb72f35e_89bc97f8-d31c-4a1d-8073-39cace07b63c_1800x1800.jpg?v=1700152515" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Twostroke AL 24</h5>
+          <p class="card-text">Price: 700,00 €</p>
+          <a href="BMC-Twostroke.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="//us.bmc-switzerland.com/cdn/shop/files/f37cbb7e-33b3-4f7e-b115-cb94fa9a3d21_1800x1800.jpg?v=1730800866" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Teammachine R 01 ONE</h5>
+          <p class="card-text">Price: 15.000,00 €</p>
+          <a href="BMC-Teammachine.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
 
 <footer> 
   <div class="hstack text-center">

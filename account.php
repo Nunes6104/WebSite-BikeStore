@@ -1,14 +1,67 @@
+<?php
+session_start(); // Inicia a sessão
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite";
+// Verifica se o utilizador está logado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php"); // Redireciona para o login
+    exit;
+}
+
+// Obter o ID do utilizador a partir da sessão
+$user_id = $_SESSION['user_id'];
+try {
+    // Conexão com a base de dados usando PDO
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Atualizar dados do cliente - verifica se o formulário foi enviado com POST
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Apagar a conta
+        $stmt = $conn->prepare("DELETE FROM Login WHERE idUser = :idUser");
+        $stmt->bindParam(":idUser", $user_id, PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            // Apaga a sessão e redireciona para a página inicial com alerta
+            session_unset();
+            session_destroy();
+            echo "<script>
+                alert('Your account has been deleted.');
+                window.location.href = 'index.php';
+            </script>";
+            exit();
+        } else {
+            echo "<script>alert('Erro ao apagar a conta.');</script>";
+        }
+    }
+    // Buscar os dados do utilizador
+    $stmt = $conn->prepare("SELECT * FROM Login WHERE idUser = :idUser");
+    $stmt->bindParam(":idUser", $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Verificar se encontrou o utilizador
+    if (!$user_data) {
+        echo "Erro: Utilizador não encontrado.";
+        exit;
+    }
+
+} catch (PDOException $e) {
+    die("Erro de conexão: " . $e->getMessage());
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Bikes</title>
-  <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -122,8 +175,89 @@
   </div>
 </nav>
 
-<!--Maps-->
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.79226558486!2d-9.162591388795233!3d38.76846837163416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932edd62bb521%3A0x1ee0de4e32108704!2sISTEC%20-%20Instituto%20Superior%20de%20Tecnologias%20Avan%C3%A7adas!5e0!3m2!1spt-PT!2spt!4v1732964831851!5m2!1spt-PT!2spt" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<div class="container d-flex justify-content-center">
+    <div class="card w-75">
+        <div class="card-body">
+            <h1>My Account</h1>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered mt-4">
+                    <tr>
+                        <th>First Name</th>
+                        <td><?php echo htmlspecialchars($user_data['first_Name']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Last Name</th>
+                        <td><?php echo htmlspecialchars($user_data['last_Name']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>User Name</th>
+                        <td><?php echo htmlspecialchars($user_data['user_Name']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td><?php echo htmlspecialchars($user_data['email']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Password</th>
+                        <td>
+                            <div class="password-container d-flex">
+                                <input type="password" id="passwordField" value="<?php echo htmlspecialchars($user_data['password']); ?>" class="form-control" readonly>
+                                <button type="button" id="togglePassword" class="btn btn-outline-secondary ms-2">Show</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Phone</th>
+                        <td><?php echo htmlspecialchars($user_data['phone']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>NIF</th>
+                        <td><?php echo htmlspecialchars($user_data['nif']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td><?php echo htmlspecialchars($user_data['dta_Nasc']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Country</th>
+                        <td><?php echo htmlspecialchars($user_data['country']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>District</th>
+                        <td><?php echo htmlspecialchars($user_data['distric']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Street</th>
+                        <td><?php echo htmlspecialchars($user_data['street']); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Postal Code</th>
+                        <td><?php echo htmlspecialchars($user_data['postal_Code']); ?></td>
+                    </tr>
+                </table>
+                <div style="display: flex; justify-content: end;">
+                <a href="edit-account.php" class="btn btn-outline-warning m-2"><b>Edit Account</b></a>
+                <a href="" class="btn btn-outline-danger m-2 openDelete"><b>Delete Account</b></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="showDelete hidden">
+  <div class="topBox">
+    <h5 class="title"><b>Delete Account</b></h5>
+    <button type="button" class="closeDel" aria-label="Close">✖</button>
+  </div>
+  <hr>
+  <div class="content">
+    <div class="content-item text-center">
+      <h6>Are you sure you want to delete all your data?</h6>
+      <form method="POST" action="">
+      <button type="submit" class="btn btn-outline-danger m-2"><b>I Understand</b></button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <footer> 
   <div class="hstack text-center">
@@ -216,5 +350,34 @@
   </div>
 </footer>
 <script src="Js/jsScript.js"></script>
+<script>
+//botão para alternar a visibilidade da senha
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordField = document.getElementById('passwordField');
+    const passwordType = passwordField.type === 'password' ? 'text' : 'password';
+    passwordField.type = passwordType;
+    
+    // Alterar o texto do botão conforme o estado da senha
+    this.textContent = passwordType === 'password' ? 'Show' : 'Hide';
+});
+
+//botão para eliminar conta
+const openDelete = document.querySelector('.openDelete');
+const showDelete = document.querySelector('.showDelete');
+const closeDel = document.querySelector('.closeDel');
+
+openDelete.addEventListener('click', function(){
+    showDelete.classList.remove('hidden');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+});
+
+closeDel.addEventListener('click', function(){
+    showDelete.classList.add('hidden');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+});
+overlay.addEventListener('click', closeDel);
+</script>
 </body>
 </html>

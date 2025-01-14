@@ -1,14 +1,31 @@
+<?php
+// Dados de conexão com o banco de dados
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome do banco de dados
+
+// Criando a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificando a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Bikes</title>
-  <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Bikes</title>
+    <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -122,8 +139,80 @@
   </div>
 </nav>
 
-<!--Maps-->
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.79226558486!2d-9.162591388795233!3d38.76846837163416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932edd62bb521%3A0x1ee0de4e32108704!2sISTEC%20-%20Instituto%20Superior%20de%20Tecnologias%20Avan%C3%A7adas!5e0!3m2!1spt-PT!2spt!4v1732964831851!5m2!1spt-PT!2spt" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<!--Cards-->
+<div class="container">
+  <div class="row" style="padding-top: 5%; padding-bottom: 5%;">
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="https://bhbikes.b-cdn.net/cache/general/e2ee77/lr905_nbb_n1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">ULTRALIGHT 9.0</h5>
+          <p class="card-text">Price: 10.100,00 €</p>
+          <a href="BH-Ultralight.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="https://bhbikes.b-cdn.net/cache/general/cc7b99/la705_nss_n1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">AEROLIGHT 7.0</h5>
+          <p class="card-text">Price: 6.200,00 €</p>
+          <a href="BH-Aerolight.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="https://bhbikes.b-cdn.net/cache/general/57d523/la405_sns_n1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">RS1 4.0</h5>
+          <p class="card-text">Price: 3.600,00 €</p>
+          <a href="BH-RS1.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="https://bhbikes.b-cdn.net/cache/general/6103ac/da953_ccc_n1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">LYNX TRAIL 9.5</h5>
+          <p class="card-text">Price: 4.400,00€</p>
+          <a href="BH-LYNXTrail.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="https://bhbikes.b-cdn.net/cache/general/65eb8c/dx754_nwo_n1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">LYNX RACE LT 7.5</h5>
+          <p class="card-text">Price: 4.699,90 €</p>
+          <a href="BH-LYNXRace.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="https://bhbikes.b-cdn.net/cache/general/fe3c5c/lt805_rcr_n1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">AERO TT 8.0</h5>
+          <p class="card-text">Price: 9.199,90 €</p>
+          <a href="BH-AEROTT.php" class="btn btn-primary">Have a Look</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
 
 <footer> 
   <div class="hstack text-center">

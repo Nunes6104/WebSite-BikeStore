@@ -1,14 +1,69 @@
+<?php
+// Dados de conexão com o banco de dados
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome do banco de dados
+
+// Criando a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificando a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+
+// Verificar se o formulário foi enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verificar se as variáveis POST estão definidas
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        // Consultar o banco de dados para encontrar o usuário com o email fornecido
+        $sql = "SELECT * FROM Login WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email); // Bind para o email
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Verificar se o usuário existe
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            // Comparar a senha
+            if ($user['password'] === $password) {
+                // Login bem-sucedido
+                echo json_encode(['success' => true, 'message' => 'Bem-vindo!']);
+            } else {
+                // Senha incorreta
+                echo json_encode(['success' => false, 'message' => 'Dados incorretos']);
+            }
+        } else {
+            // Usuario não encontrado
+            echo json_encode(['success' => false, 'message' => 'Dados incorretos']);
+        }
+
+        $stmt->close();
+    } else {
+        // Se os campos não forem preenchidos corretamente
+        echo json_encode(['success' => false, 'message' => 'Por favor, preencha todos os campos.']);
+    }
+}
+
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Bikes</title>
-  <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Bikes</title>
+    <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -122,8 +177,144 @@
   </div>
 </nav>
 
-<!--Maps-->
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.79226558486!2d-9.162591388795233!3d38.76846837163416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932edd62bb521%3A0x1ee0de4e32108704!2sISTEC%20-%20Instituto%20Superior%20de%20Tecnologias%20Avan%C3%A7adas!5e0!3m2!1spt-PT!2spt!4v1732964831851!5m2!1spt-PT!2spt" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<!--Carousel-->
+<div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2000">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="img/BMC-main.jpg" class="d-block w-100" alt="Imagem 1">
+    </div>
+    <div class="carousel-item">
+      <img src="img/cannondale-main.jpg" class="d-block w-100" alt="Imagem 2">
+    </div>
+    <div class="carousel-item">
+      <img src="img/BH-main.jpg" class="d-block w-100" alt="Imagem 3">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<!--Cards-->
+<div class="container">
+  <div class="row" style="padding-top: 5%; padding-bottom: 5%;">
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/BH.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">BH Bikes</h5>
+          <p class="card-text"></p>
+          <a href="BH-Bikes.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/BMC.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">BMC</h5>
+          <p class="card-text"></p>
+          <a href="BMC.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/cannondale.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Cannondale</h5>
+          <p class="card-text"></p>
+          <a href="Cannondale.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/cervelo.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Cervelo</h5>
+          <p class="card-text"></p>
+          <a href="Cervelo.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/focus.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Focus</h5>
+          <p class="card-text"></p>
+          <a href="Focus.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/merida.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Merida</h5>
+          <p class="card-text"></p>
+          <a href="Merida.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/mmr.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">MMR</h5>
+          <p class="card-text"></p>
+          <a href="MMR.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/pinarello.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Pinarello</h5>
+          <p class="card-text"></p>
+          <a href="Pinarello.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/scott.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Scott</h5>
+          <p class="card-text"></p>
+          <a href="Scott.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card" style="width: 100%;">
+        <img src="img/specialized.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Specialized</h5>
+          <p class="card-text"></p>
+          <a href="Specialized.php" class="btn btn-primary">Click Here</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <footer> 
   <div class="hstack text-center">

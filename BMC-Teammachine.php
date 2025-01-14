@@ -1,14 +1,45 @@
+<?php
+// Dados de conexão com o banco de dados
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome do banco de dados
+
+// Criando a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Verificando a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+
+$idBike = 12; // Definição fixa do ID Bikes
+// Recolhe informação da base de dados
+$sql = "SELECT * FROM Bikes WHERE idBike = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $idBike);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $bike = $result->fetch_assoc();
+} else {
+    echo "Bicicleta não encontrada.";
+}
+$name = $bike['name'];
+
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Bikes</title>
-  <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMC Teammachine</title>
+    <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -122,8 +153,163 @@
   </div>
 </nav>
 
-<!--Maps-->
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.79226558486!2d-9.162591388795233!3d38.76846837163416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932edd62bb521%3A0x1ee0de4e32108704!2sISTEC%20-%20Instituto%20Superior%20de%20Tecnologias%20Avan%C3%A7adas!5e0!3m2!1spt-PT!2spt!4v1732964831851!5m2!1spt-PT!2spt" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<div class="row g-0 bg-body-secondary position-relative">
+    <div class="col-md-6 mb-md-0 p-md-4">
+        <div id="carouselExampleDark" class="carousel carousel-dark slide img-fluid" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="10000">
+                    <img src="//us.bmc-switzerland.com/cdn/shop/files/f37cbb7e-33b3-4f7e-b115-cb94fa9a3d21_1800x1800.jpg?v=1730800866" class="d-block w-100 rounded-1" alt="...">
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="//us.bmc-switzerland.com/cdn/shop/files/1feb9782-5b24-4118-a144-884164f43433_1800x1800.jpg?v=1730800866" class="d-block w-100 rounded-1" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="//us.bmc-switzerland.com/cdn/shop/files/d48396ea-5a89-4009-94a5-778cd0a473c2_1800x1800.jpg?v=1730800867" class="d-block w-100 rounded-1" alt="...">
+                </div>
+            </div>
+            <!-- Controles do Carousel -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="col-md-6 p-4 ps-md-0">
+        <h3 class="mt-0 mt-2"><?= $name?></h3>
+
+        <div class="d-flex flex-wrap align-items-center gap-4 ms-2 mt-4">
+          <div class="price-section">
+              <h3><strong>15.000,00 €</strong></h3>
+          </div>
+        <!-- Formulário de Adicionar ao Carrinho -->
+        <form method="POST" action="Cart.php" class="d-flex flex-column flex-md-row align-items-center gap-2 mb-2">
+            <input type="hidden" name="idBike" value="<?= $idBike ?>">
+
+            <!-- Campo para selecionar a quantidade -->
+            <input 
+                type="number" 
+                name="quantidade" 
+                value="1" 
+                min="1" 
+                class="form-control w-auto text-center" 
+                style="max-width: 80px;" 
+            >
+
+            <!-- Botão de Adicionar ao Carrinho -->
+            <button type="submit" class="btn btn-outline-success" name="add_to_cart">
+                <i class="ph ph-shopping-cart"></i>ADD TO CART</button>
+        </form>
+
+        <!-- Accordion Ajustado -->
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button btn btn-dark focus-ring focus-ring-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Details
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body overflow-auto">
+                        <p><strong>Key Features</strong></p>
+                        <p>New SRAM RED AXS Drivetrain DT Swiss ARC 1100 Wheelset ICS Carbon Aero Cockpit
+                        </p>
+                    </div>
+                </div>
+            <!-- Mais Seções do Accordion -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed btn btn-dark focus-ring focus-ring-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Tecnical Information
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body overflow-auto">
+                        <p><strong>Frame</strong></p> 
+                        <p>Aerolight Disc ACR Carbon Monocoque</p>
+                        <hr>
+                        <p><strong>Fork</strong></p>
+                        <p>Aerolight, Integrated Tapered Full Carbon 1.5"</p>
+                        <hr>
+                        <p><strong>Drivetrain</strong></p>  
+                        <p><strong>Shifters</strong></p> 
+                        <p>Shimano Ultegra DI2 Hydra</p>  
+                        <p><strong>Rear Derailleur</strong></p>
+                        <p>Shimano Ultegra DI2 8150 12sp</p>
+                        <p><strong>Front Derailleur</strong></p>
+                        <p>Shimano Ultegra DI2 8150</p>
+                        <p><strong>Crankset</strong></p>
+                        <p>Shimano Ultegra FCR8100 52/36</p>
+                        <p><strong>Cassette</strong></p>
+                        <p>Shimano Ultegra 11/34</p>
+                        <p><strong>Chain</strong></p>
+                        <p>Shimano Ultegra</p>
+                        <hr>
+                        <p><strong>Brakes</strong></p>
+                        <p><strong>Front Brake</strong></p>
+                        <p>Shimano Ultegra Hydraulic</p>
+                        <p><strong>Rear Brake</strong></p>
+                        <p>Shimano Ultegra Hydraulic</p>
+                        <hr>
+                        <p><strong>Wheelset</strong></p>
+                        <p>Vision SC60</p>
+                        <hr>
+                        <p><strong>Tires</strong></p>
+                        <p>Pirelli Pzero Race 700x28</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed btn btn-dark focus-ring focus-ring-secondary"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                        aria-expanded="false" aria-controls="collapseThree">
+                        Reviews
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body overflow-auto">
+                        <strong>Top Reviews</strong>
+                        <p></p>
+                        <p>
+                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
+                                alt="user-male-circle" />
+                            <strong>Kevin</strong> : I would say for anyone who is building, definitely look into
+                            these gpu's!! The one I brought let me play any game FLAWLESSLY with 0 lag and around
+                            200-160 fps which isn’t too shabby considering the monitor I use most has only 144 hz.
+                        </p>
+
+                        <hr>
+                        <p>
+                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
+                                alt="user-male-circle" />
+                            <strong>Anthony</strong> : fast shipping, i upgraded to this from an Asus phoenix 3050
+                            oc and its a world of difference! runs really well, much cooler than my previous gpu.
+                            would recommend
+                        </p>
+
+                        <hr>
+                        <p>
+                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
+                                alt="user-male-circle" />
+                            <strong>LeoFer</strong> : fast shipping, met my expectations fully. I was replacing a
+                            2070 card that appeared overwhelmed by newer gaming requirements and was degrading game
+                            performance. The change solved my issues as expected. The price was good and delivery on
+                            time.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
 
 <footer> 
   <div class="hstack text-center">

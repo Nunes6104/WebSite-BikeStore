@@ -1,14 +1,163 @@
+<?php
+session_start();
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite"; // Nome da base de dados
+
+// Criar a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Verifica a conexão
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+if (!isset($_SESSION['user_id'])) {
+  header("Location: index.php"); // Redireciona para o login
+  exit;
+}
+
+// Inicializar o carrinho se não existir
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+// Carregar o carrinho da base de dados ao iniciar a sessão
+if (isset($_SESSION['user_id'])) {
+    $idUser = $_SESSION['user_id'];
+    $query = "SELECT idBike, quantidade FROM cart WHERE idUser = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $idUser);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $_SESSION['cart'] = [];
+    while ($row = $result->fetch_assoc()) {
+        $_SESSION['cart'][] = [
+            'idBike' => $row['idBike'],
+            'quantidade' => $row['quantidade']
+        ];
+    }
+}
+
+// Adicionar ou remover itens do carrinho
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add_to_cart'])) {
+        $idBike = isset($_POST['idBike']) ? intval($_POST['idBike']) : null;
+        $quantidade = isset($_POST['quantidade']) ? intval($_POST['quantidade']) : 1;
+
+        if (isset($_SESSION['user_id'])) {
+            $idUser = $_SESSION['user_id'];
+
+            // Verificar se o item já existe no carrinho
+            $query = "SELECT quantidade FROM cart WHERE idUser = ? AND idBike = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param('ii', $idUser, $idBike);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                // Atualizar quantidade na base de dados
+                $query = "UPDATE cart SET quantidade = quantidade + ? WHERE idUser = ? AND idBike = ?";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param('iii', $quantidade, $idUser, $idBike);
+            } else {
+                // Inserir novo item na base de dados
+                $query = "INSERT INTO cart (idUser, idBike, quantidade) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param('iii', $idUser, $idBike, $quantidade);
+            }
+            $stmt->execute();
+        }
+
+        // Atualizar o carrinho na sessão
+        $itemExistente = false;
+        foreach ($_SESSION['cart'] as &$item) {
+            //se já existir o item no carrinho
+            if ($item['idBike'] == $idBike) {
+                $item['quantidade'] += $quantidade;
+                $itemExistente = true;
+                break;
+            }
+        }
+        //se não existir
+        if (!$itemExistente) {
+            $_SESSION['cart'][] = [
+                'idBike' => $idBike,
+                'quantidade' => $quantidade
+            ];
+        }
+    }
+}
+if (isset($_POST['remove_item'])) {
+    $idBike = intval($_POST['idBike']);
+
+    if (isset($_SESSION['user_id'])) {
+        $idUser = $_SESSION['user_id'];
+
+        // Remover da base de dados
+        $query = "DELETE FROM cart WHERE idUser = ? AND idBike = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('ii', $idUser, $idBike);
+        if($stmt->execute()){
+          echo "<script>alert('Item Removed with Success'</script>";
+        }
+    }
+
+    // Remover da sessão
+    foreach ($_SESSION['cart'] as $index => $item) {
+        if ($item['idBike'] == $idBike) {
+            unset($_SESSION['cart'][$index]);
+            break;
+        }
+    }
+    $_SESSION['cart'] = array_values($_SESSION['cart']);
+
+}
+
+// Exibir itens no carrinho
+$total = 0;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Bikes</title>
-  <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Motion Bikes</title>
+    <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .cart-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .cart-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -122,8 +271,69 @@
   </div>
 </nav>
 
-<!--Maps-->
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.79226558486!2d-9.162591388795233!3d38.76846837163416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932edd62bb521%3A0x1ee0de4e32108704!2sISTEC%20-%20Instituto%20Superior%20de%20Tecnologias%20Avan%C3%A7adas!5e0!3m2!1spt-PT!2spt!4v1732964831851!5m2!1spt-PT!2spt" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<div class="cart-container">
+    <div class="cart-header">Your Cart</div>
+    <form method="POST" action="cart.php">
+    <div>
+        <?php
+        if (!empty($_SESSION['cart'])): // Verifica se o carrinho não está vazio
+            foreach ($_SESSION['cart'] as $item):
+              $idBike = $item['idBike'];
+
+              //select da tabela bikes
+              $query = "SELECT name, price FROM Bikes WHERE idBike = ?";
+              $stmt = $conn->prepare($query);
+              $stmt->bind_param('i', $idBike);
+              $stmt->execute();
+              $result = $stmt->get_result();
+
+                // Verifica se foi encontrado um resultado
+                if ($result -> num_rows > 0) {
+                    $bike = $result -> fetch_assoc();
+                    $name = $bike['name'];
+                    $price = $bike['price'];
+                } else {
+                    $name = "Item not found"; // Caso não encontre
+                    $price = 00000;
+                }
+                // Calcular subtotal
+                $subtotal = $price * $item['quantidade'];
+                $total += $subtotal;
+        ?>
+            <div class="cart-item">
+                <div>
+                    <strong><?= htmlspecialchars($name) ?></strong>
+                    <p>€<?= number_format($price, 2) ?> x <?= $item['quantidade'] ?></p>
+                    <p><strong>Subtotal:</strong> €<?= number_format($subtotal, 2) ?></p>
+                </div>
+                <div>
+                    <form method="POST" action="cart.php">
+                        <input type="hidden" name="idBike" value="<?= $item['idBike'] ?>">
+                        <button type="submit" name="remove_item" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </div>
+            </div>
+        <?php endforeach; else: ?>
+            <p>Your Cart is Empty!</p>
+        <?php endif; ?>
+    </div>
+
+    <!-- Exibe o valor total -->
+    <div class="total">
+        <strong>Total:</strong> €<?= number_format($total, 2) ?>
+    </div>
+
+    <!-- Botões para continuar comprando ou finalizar pedido -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="main.php" class="btn btn-secondary">Continue Buying</a>
+        <?php if ($total > 0): ?>
+            <a type="submit" name="checkout" class="btn btn-success" href="Thanks.php">Finish Order</a>
+        <?php endif; ?>
+    </div>
+    </form>
+
+</div>
+
 
 <footer> 
   <div class="hstack text-center">

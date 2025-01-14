@@ -18,19 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lastName = $_POST['lastName'];
     $userName = $_POST['username'];
     $email = $_POST['email'];
-    $password = $_POST['password']; // Encriptação da senha
+    $password = $_POST['password'];
     $phone = $_POST['mobile'];
     $nif = $_POST['nif'];
     $country = $_POST['country'];
     $district = $_POST['district'];
     $street = $_POST['street'];
     $postalCode = $_POST['postalCode'];
-    $age = $_POST['age']; // Usado como substituto para dta_Nasc
-    
-    // Cálculo de data de nascimento (aproximado)
-    $currentYear = date("Y");
-    $birthYear = $currentYear - $age;
-    $dtaNasc = $birthYear . "-01-01";
+    $dtaNasc = $_POST['dob'];
     
     // Verificar se o email ou username já existe
     $checkSql = "SELECT * FROM Login WHERE email = '$email' OR user_Name = '$userName'";
@@ -45,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($conn->query($sql) === TRUE) {
             // Redirecionar para a mesma página ou outra página após o registo
-            header("Location: " . $_SERVER['PHP_SELF']);
+            header("Location: index.php");
             exit(); // Garantir que o código após o redirecionamento não seja executado
         } else {
             echo "Erro: " . $sql . "<br>" . $conn->error;
@@ -83,6 +78,7 @@ $conn->close();
             <div class="card shadow-sm">
                 <div class="card-header text-center bg-danger text-white">
                     <h4>Sign In</h4>
+                    <a href="Index.php">Already Has a Account</a>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="">
@@ -193,8 +189,8 @@ $conn->close();
                         <!-- Age and NIF -->
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="age" class="form-label">Age</label>
-                                <input type="number" class="form-control" id="age" name="age" placeholder="Enter your age" required>
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" name="dob" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="nif" class="form-label">NIF</label>

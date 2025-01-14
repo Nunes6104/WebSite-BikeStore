@@ -1,23 +1,100 @@
 <?php
-session_start();
-// Verifica se o utilizador está autenticado
+session_start(); // Inicia a sessão
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "PHPWebsite";
+// Verifica se o utilizador está logado
 if (!isset($_SESSION['user_id'])) {
-    // Se não estiver autenticado, redireciona para o login (index.php)
-    header("Location: index.php");
-    exit();
+    header("Location: index.php"); // Redireciona para o login
+    exit;
 }
+// Obter o ID do utilizador a partir da sessão
+$user_id = $_SESSION['user_id'];
+
+try {
+    // Conexão com a base de dados utilizando PDO
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Habilita o modo de erro
+    // Buscar os dados do utilizador
+    $stmt = $conn->prepare("SELECT * FROM Login WHERE idUser = ?");
+    $stmt->bindParam(1, $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    // Verificar se encontrou o utilizador
+    if ($stmt->rowCount() === 1) {
+        $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
+    } else {
+        echo "Erro: Utilizador não encontrado.";
+        exit;
+    }
+
+    // Atualizar dados do cliente - verifica se o formulário foi enviado com POST
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Captura os dados enviados pelo formulário
+        $firstName = $_POST['firstName'];
+        $lastName = $_POST['lastName'];
+        $userName = $_POST['username'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $phone = $_POST['mobile'];
+        $nif = $_POST['nif'];
+        $country = $_POST['country'];
+        $district = $_POST['district'];
+        $street = $_POST['street'];
+        $postalCode = $_POST['postalCode'];
+        $dob = $_POST['dob'];
+        // Atualizar os dados no banco de dados utilizando PDO
+        $updateSql = "UPDATE Login SET first_Name = :firstName, last_Name = :lastName, user_Name = :userName, email = :email, password = :password, phone = :phone, nif = :nif, country = :country, distric = :district, street = :street, postal_Code = :postalCode, dta_Nasc = :dob WHERE idUser = :user_id";
+
+        $stmt = $conn->prepare($updateSql);
+        $stmt->bindParam(':firstName', $firstName);
+        $stmt->bindParam(':lastName', $lastName);
+        $stmt->bindParam(':userName', $userName);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':nif', $nif);
+        $stmt->bindParam(':country', $country);
+        $stmt->bindParam(':district', $district);
+        $stmt->bindParam(':street', $street);
+        $stmt->bindParam(':postalCode', $postalCode);
+        $stmt->bindParam(':dob', $dob);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Dados atualizados com sucesso!');</script>";
+            // Redirecionar ou mostrar mensagem de sucesso
+            header("Location: account.php"); // página de perfil
+            exit();
+        } else {
+            echo "Erro: " . $stmt->errorInfo()[2];
+        }
+    }
+
+} catch (PDOException $e) {
+    echo "Erro de conexão: " . $e->getMessage();
+}
+$conn = null; // Fecha a conexão com a base de dados
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motion Bikes</title>
+    <title>Edit Client</title>
     <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      .card {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            background-color:rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
@@ -131,68 +208,125 @@ if (!isset($_SESSION['user_id'])) {
   </div>
 </nav>
 
-<!--Carousel-->
-<div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2000">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="img/banner1.jpeg" class="d-block w-100" alt="Imagem 1">
-    </div>
-    <div class="carousel-item">
-      <img src="img/banner2.jpeg" class="d-block w-100" alt="Imagem 2">
-    </div>
-    <div class="carousel-item">
-      <img src="img/banner3.jpeg" class="d-block w-100" alt="Imagem 3">
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
+<div class="container my-5" style="max-width: 100%;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h2 class="text-center"><b>Edit Account Profile</b></h2>
+                    <a href="account.php">Go Back to Account</a>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="">
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($user_data['first_Name']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($user_data['last_Name']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($user_data['user_Name']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user_data['email']); ?>" required>
+                        </div>
 
-<!--Cards-->
-<h2 class="m-2">Popular Sellers</h2>
-<div class="container">
-  <div class="row" style="padding-top: 5%; padding-bottom: 5%;">
-    <div class="col-md-4 mb-4">
-      <div class="card" style="width: 100%;">
-        <img src="https://bhbikes.b-cdn.net/cache/general/fe3c5c/lt805_rcr_n1.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">AERO TT 8.0</h5>
-          <p class="card-text">Price: 9.199,90 €</p>
-          <a href="BH-AEROTT.php" class="btn btn-primary">Have a Look</a>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="password-container d-flex">
+                            <input type="password" id="passwordField" name="password" value="<?php echo htmlspecialchars($user_data['password']); ?>" class="form-control" required>
+                            <button type="button" id="togglePassword" class="btn btn-outline-secondary ms-2">Show</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="mobile" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="mobile" name="mobile" value="<?php echo htmlspecialchars($user_data['phone']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nif" class="form-label">NIF</label>
+                            <input type="text" class="form-control" id="nif" name="nif" value="<?php echo htmlspecialchars($user_data['nif']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="country" class="form-label">Country</label>
+                            <select class="form-control mb-2" name="country" required>
+                                <option value="">Select a country</option>
+                                <option value="Albânia">Albânia</option>
+                                <option value="Alemanha">Alemanha</option>
+                                <option value="Andorra">Andorra</option>
+                                <option value="Áustria">Áustria</option>
+                                <option value="Bélgica">Bélgica</option>
+                                <option value="Bielorrússia">Bielorrússia</option>
+                                <option value="Bósnia e Herzegovina">Bósnia e Herzegovina</option>
+                                <option value="Bulgária">Bulgária</option>
+                                <option value="Chipre">Chipre</option>
+                                <option value="Croácia">Croácia</option>
+                                <option value="Dinamarca">Dinamarca</option>
+                                <option value="Eslováquia">Eslováquia</option>
+                                <option value="Eslovénia">Eslovénia</option>
+                                <option value="Espanha">Espanha</option>
+                                <option value="Estónia">Estónia</option>
+                                <option value="Finlândia">Finlândia</option>
+                                <option value="França">França</option>
+                                <option value="Grécia">Grécia</option>
+                                <option value="Hungria">Hungria</option>
+                                <option value="Irlanda">Irlanda</option>
+                                <option value="Islândia">Islândia</option>
+                                <option value="Itália">Itália</option>
+                                <option value="Kosovo">Kosovo</option>
+                                <option value="Letónia">Letónia</option>
+                                <option value="Liechtenstein">Liechtenstein</option>
+                                <option value="Lituânia">Lituânia</option>
+                                <option value="Luxemburgo">Luxemburgo</option>
+                                <option value="Macedónia do Norte">Macedónia do Norte</option>
+                                <option value="Malta">Malta</option>
+                                <option value="Moldávia">Moldávia</option>
+                                <option value="Mónaco">Mónaco</option>
+                                <option value="Montenegro">Montenegro</option>
+                                <option value="Noruega">Noruega</option>
+                                <option value="Países Baixos">Países Baixos</option>
+                                <option value="Polónia">Polónia</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Reino Unido">Reino Unido</option>
+                                <option value="República Checa">República Checa</option>
+                                <option value="Roménia">Roménia</option>
+                                <option value="Rússia">Rússia</option>
+                                <option value="San Marino">San Marino</option>
+                                <option value="Sérvia">Sérvia</option>
+                                <option value="Suécia">Suécia</option>
+                                <option value="Suíça">Suíça</option>
+                                <option value="Turquia">Turquia</option>
+                                <option value="Ucrânia">Ucrânia</option>
+                                <option value="Vaticano">Vaticano</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="district" class="form-label">District</label>
+                            <input type="text" class="form-control mb-2" name="district" value="<?php echo htmlspecialchars($user_data['distric']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="street" class="form-label">Street</label>
+                            <input type="text" class="form-control" id="street" name="street" value="<?php echo htmlspecialchars($user_data['street']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postalCode" class="form-label">Postal Code</label>
+                            <input type="text" class="form-control" id="postalCode" name="postalCode" value="<?php echo htmlspecialchars($user_data['postal_Code']); ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($user_data['dta_Nasc']); ?>" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-warning w-100"><b>Update</b></button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
- 
-
-    <div class="col-md-4 mb-4">
-      <div class="card" style="width: 100%;">
-        <img src="//us.bmc-switzerland.com/cdn/shop/files/f4e0d977-3c3c-42fd-9e94-1055a15c657f_1800x1800.jpg?v=1731409225" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Kaius 01 THREE</h5>
-          <p class="card-text">Price: 6.700,00 €</p>
-          <a href="BMC-Kaius.php" class="btn btn-primary">Have a Look</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 mb-4">
-      <div class="card" style="width: 100%;">
-        <img src="//us.bmc-switzerland.com/cdn/shop/files/f57dd3fa-7204-4d93-b145-7bb155d60430_1800x1800.jpg?v=1702543648" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Alpenchallenge AL ONE</h5>
-          <p class="card-text">Price: 2.000,00€</p>
-          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Have a Look</a>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <footer> 
@@ -286,5 +420,16 @@ if (!isset($_SESSION['user_id'])) {
   </div>
 </footer>
 <script src="Js/jsScript.js"></script>
+<script>
+//botão para alternar a visibilidade da senha
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordField = document.getElementById('passwordField');
+    const passwordType = passwordField.type === 'password' ? 'text' : 'password';
+    passwordField.type = passwordType;
+    
+    // Alterar o texto do botão conforme o estado da senha
+    this.textContent = passwordType === 'password' ? 'Show' : 'Hide';
+});
+</script>
 </body>
 </html>
