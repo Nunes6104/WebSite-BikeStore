@@ -3,7 +3,6 @@ const openModal = document.querySelector('.openModal');
 const showBox = document.querySelector('.showBox');
 const closeBox = document.querySelector('.closeBox');
 const overlay = document.querySelector('.overlay');
-const loginModal = document.querySelector('.loginModal');
 
 openModal.addEventListener('click', function(){
   showBox.classList.remove('hidden');
