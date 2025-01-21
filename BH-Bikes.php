@@ -148,7 +148,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">ULTRALIGHT 9.0</h5>
           <p class="card-text">Price: 10.100,00 €</p>
-          <a href="BH-Ultralight.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-Ultralight.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -159,7 +159,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">AEROLIGHT 7.0</h5>
           <p class="card-text">Price: 6.200,00 €</p>
-          <a href="BH-Aerolight.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-Aerolight.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -170,7 +170,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">RS1 4.0</h5>
           <p class="card-text">Price: 3.600,00 €</p>
-          <a href="BH-RS1.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-RS1.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -181,7 +181,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">LYNX TRAIL 9.5</h5>
           <p class="card-text">Price: 4.400,00€</p>
-          <a href="BH-LYNXTrail.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-LYNXTrail.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -192,7 +192,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">LYNX RACE LT 7.5</h5>
           <p class="card-text">Price: 4.699,90 €</p>
-          <a href="BH-LYNXRace.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-LYNXRace.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -203,7 +203,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">AERO TT 8.0</h5>
           <p class="card-text">Price: 9.199,90 €</p>
-          <a href="BH-AEROTT.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-AEROTT.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>

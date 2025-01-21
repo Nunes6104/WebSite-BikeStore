@@ -204,7 +204,12 @@ $conn->close();
         <button type="submit" class="btn btn-outline-success" name="add_to_cart">
             <i class="ph ph-shopping-cart"></i>ADD TO CART</button>
     </form>
-
+    <!-- Botão de Adicionar ao favorito -->
+    <form method="POST" action="Favourites.php" class="d-flex flex-column flex-md-row align-items-center gap-2 mb-2">
+        <input type="hidden" name="idBike" value="<?= $idBike ?>">
+        <button type="submit" class="btn border-0 bg-transparent fs-4 text-danger" name="add_to_fav">
+          <i class="ph-bold ph-heart-straight"></i></button>
+      </form>
         <!-- Accordion Ajustado -->
         <div class="accordion" id="accordionExample">
             <div class="accordion-item">

@@ -21,6 +21,13 @@ try {
         $stmt->execute();
         if ($stmt->rowCount() == 1) {
             $Login = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($email === 'admin@motionbike.pt' && $password === 'Admin1234'){
+                $_SESSION['user_email'] = $email;
+                $_SESSION['user_password'] = $password;
+                header("Location: Admin/Admin.php");
+                echo "<script>alert('Welcome to the Admin Dashboard')</script>";
+                exit;
+            }
             // Verifica a pass
             if ($password === $Login['password']) { 
                 // Login bem-sucedido
@@ -30,10 +37,10 @@ try {
                 header("Location: Main.php");
                 exit;
             } else {
-                $error_message = "Senha incorreta.";
+                $error_message = "Incorrect Password.";
             }
         } else {
-            $error_message = "Utilizador não encontrado.";
+            $error_message = "User not Found.";
         }
     }
 } catch (PDOException $e) {

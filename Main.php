@@ -155,7 +155,6 @@ if (!isset($_SESSION['user_id'])) {
 </div>
 
 <!--Cards-->
-<h2 class="m-2">Popular Sellers</h2>
 <div class="container">
   <div class="row" style="padding-top: 5%; padding-bottom: 5%;">
     <div class="col-md-4 mb-4">
@@ -164,7 +163,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="card-body">
           <h5 class="card-title">AERO TT 8.0</h5>
           <p class="card-text">Price: 9.199,90 €</p>
-          <a href="BH-AEROTT.php" class="btn btn-primary">Have a Look</a>
+          <a href="BH-AEROTT.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -176,7 +175,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="card-body">
           <h5 class="card-title">Kaius 01 THREE</h5>
           <p class="card-text">Price: 6.700,00 €</p>
-          <a href="BMC-Kaius.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Kaius.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -187,7 +186,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="card-body">
           <h5 class="card-title">Alpenchallenge AL ONE</h5>
           <p class="card-text">Price: 2.000,00€</p>
-          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -220,6 +219,7 @@ if (!isset($_SESSION['user_id'])) {
             <h5><b>Phone Number:</b></h5>
             <h6>927 402 094</h6>
           </div>
+          
           <div class="contact-item">
             <hr>
             <a class="link-dark link-underline link-underline-opacity-0 m-2" href="https://www.instagram.com" target="_blank">

@@ -62,7 +62,37 @@ try {
     <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-</head>
+    <style>
+      .card {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .table th, .table td {
+        text-align: center;
+        color: white;
+        background-color: rgba(50, 45, 45, 0.5);
+    }
+    h1 {
+        margin-top: 20px;
+        font-size: 2.5rem;
+        text-align: center;
+        color: #333;
+    }
+    .password-container {
+        align-items: center;
+        position: relative;
+        width: max-content;
+    }
+    .password-container input {
+        flex: 1;
+    }
+    .password-container button {
+        margin-left: 5px;
+    }
+    </style>
+
+  </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
   <div class="container-fluid">
@@ -200,9 +230,9 @@ try {
                     <tr>
                         <th>Password</th>
                         <td>
-                            <div class="password-container d-flex">
+                            <div class="password-container">
                                 <input type="password" id="passwordField" value="<?php echo htmlspecialchars($user_data['password']); ?>" class="form-control" readonly>
-                                <button type="button" id="togglePassword" class="btn btn-outline-secondary ms-2">Show</button>
+                                <button type="button" id="togglePassword" class="btn btn-outline-danger ms-2">Show</button>
                             </div>
                         </td>
                     </tr>
@@ -235,9 +265,9 @@ try {
                         <td><?php echo htmlspecialchars($user_data['postal_Code']); ?></td>
                     </tr>
                 </table>
-                <div style="display: flex; justify-content: end;">
+                <div style="display: flex; justify-content: end; margin-bottom: 20px">
                 <a href="edit-account.php" class="btn btn-outline-warning m-2"><b>Edit Account</b></a>
-                <a href="" class="btn btn-outline-danger m-2 openDelete"><b>Delete Account</b></a>
+                <a class="btn btn-outline-danger m-2 openDelete" href=""><b>Delete Account</b></a>
                 </div>
             </div>
         </div>
@@ -361,15 +391,16 @@ document.getElementById('togglePassword').addEventListener('click', function() {
     this.textContent = passwordType === 'password' ? 'Show' : 'Hide';
 });
 
+
 //botão para eliminar conta
 const openDelete = document.querySelector('.openDelete');
 const showDelete = document.querySelector('.showDelete');
 const closeDel = document.querySelector('.closeDel');
 
-openDelete.addEventListener('click', function(){
+openDelete.addEventListener('click', function(event){
+    event.preventDefault();
     showDelete.classList.remove('hidden');
     overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
 });
 
 closeDel.addEventListener('click', function(){

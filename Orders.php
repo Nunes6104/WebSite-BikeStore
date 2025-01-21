@@ -55,6 +55,36 @@ if ($vendas) {
     <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+    .card {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .table th, .table td {
+        text-align: center;
+        color: white;
+        background-color: rgba(50, 45, 45, 0.5);
+    }
+    h1 {
+        margin-top: 20px;
+        font-size: 2.5rem;
+        text-align: center;
+        color: #333
+    }
+    .password-container {
+        display: flex;
+        align-items: center;
+        position: relative;
+        width: max-content;
+    }
+    .password-container input {
+        flex: 1;
+    }
+    .password-container button {
+        margin-left: 5px;
+    }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">

@@ -4,9 +4,7 @@ $servername = "localhost";
 $username = "root";
 $password = ""; // Substituir pela password da base de dados
 $dbname = "PHPWebsite"; // Nome da base de dados
-
 $conn = new mysqli($servername, $username, $password, $dbname);
-
 // Verificar conexão
 if ($conn->connect_error) {
     die("Erro de conexão: " . $conn->connect_error);
@@ -39,9 +37,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 VALUES ('$firstName', '$lastName', '$userName', '$email', '$password', '$phone', '$nif', '$country', '$district', '$street', '$postalCode', '$dtaNasc')";
 
         if ($conn->query($sql) === TRUE) {
-            // Redirecionar para a mesma página ou outra página após o registo
-            header("Location: index.php");
-            exit(); // Garantir que o código após o redirecionamento não seja executado
+            // Se não houver sessão ativa, redirecionar para o index.php (página inicial)
+            if (!isset($_SESSION['user_email'])) {
+                header("Location: index.php");
+                exit();
+            } else {
+                // Caso o utilizador esteja logado como admin, redirecionar para o Admin.php
+                header("Location: Admin/Users.php");
+                exit();
+            }
         } else {
             echo "Erro: " . $sql . "<br>" . $conn->error;
         }

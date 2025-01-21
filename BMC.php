@@ -149,7 +149,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">Speedmachine 01 ONE</h5>
           <p class="card-text">Price: 17.000,00 €</p>
-          <a href="BMC-Speedmachine.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Speedmachine.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -160,7 +160,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">URS 01 THREE</h5>
           <p class="card-text">Price: 7.900,00 €</p>
-          <a href="BMC-URS.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-URS.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -171,7 +171,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">Kaius 01 THREE</h5>
           <p class="card-text">Price: 6.700,00 €</p>
-          <a href="BMC-Kaius.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Kaius.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -182,7 +182,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">Alpenchallenge AL ONE</h5>
           <p class="card-text">Price: 2.000,00€</p>
-          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Alpenchallenge.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -193,7 +193,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">Twostroke AL 24</h5>
           <p class="card-text">Price: 700,00 €</p>
-          <a href="BMC-Twostroke.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Twostroke.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>
@@ -204,7 +204,7 @@ $conn->close();
         <div class="card-body">
           <h5 class="card-title">Teammachine R 01 ONE</h5>
           <p class="card-text">Price: 15.000,00 €</p>
-          <a href="BMC-Teammachine.php" class="btn btn-primary">Have a Look</a>
+          <a href="BMC-Teammachine.php" class="btn btn-primary">Take a Look</a>
         </div>
       </div>
     </div>

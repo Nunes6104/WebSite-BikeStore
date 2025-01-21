@@ -1,46 +1,162 @@
 <?php
-// Dados de conexão com o banco de dados
+session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "PHPWebsite"; // Nome do banco de dados
-
-// Criando a conexão
+$dbname = "PHPWebsite"; // Nome da base de dados
+// Criar a conexão
 $conn = new mysqli($servername, $username, $password, $dbname);
-// Verificando a conexão
 if ($conn->connect_error) {
     die("Erro de conexão: " . $conn->connect_error);
 }
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php"); // Redireciona para o login
+    exit;
+}
+$idUser = $_SESSION['user_id'];
 
-$idBike = 10; // Definição fixa do ID Bikes
-// Recolhe informação da base de dados
-$sql = "SELECT * FROM Bikes WHERE idBike = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $idBike);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_fav'])) {
+  $idBike = intval($_POST['idBike']);
+  if ($idBike > 0) {
+      // Verificar se o item já existe nos favoritos
+      $checkQuery = "SELECT * FROM Favourites WHERE idUser = ? AND idBike = ?";
+      $stmt = $conn->prepare($checkQuery);
+      $stmt->bind_param('ii', $idUser, $idBike);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+          echo "<script>alert('Item already exists in Favourites!');</script>";
+      } else {
+          // Inserir o item se não existir
+          $query = "INSERT INTO Favourites (idUser, idBike) VALUES (?, ?)";
+          $stmt = $conn->prepare($query);
+          $stmt->bind_param('ii', $idUser, $idBike);
+          if ($stmt->execute()) {
+              echo "<script>alert('Added with Success!');</script>";
+          } else {
+              echo "<script>alert('Error to add.');</script>";
+          }
+      }
+  }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
+  $idBike = intval($_POST['idBike']);
+  if ($idBike > 0) {
+      $query = "DELETE FROM Favourites WHERE idUser = ? AND idBike = ?";
+      $stmt = $conn->prepare($query);
+      $stmt->bind_param('ii', $idUser, $idBike);
+      if ($stmt->execute()) {
+        header("Location: Favourites.php");
+      } else {
+          echo "<script>alert('Error to remove the item.');</script>";
+      }
+  }
+}
+
+$favQuery = "SELECT B.idBike, B.name, B.brand, B.typeB, B.price 
+             FROM Favourites F 
+             INNER JOIN Bikes B ON F.idBike = B.idBike 
+             WHERE F.idUser = ?";
+$stmt = $conn->prepare($favQuery);
+$stmt->bind_param('i', $idUser);
 $stmt->execute();
 $result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $bike = $result->fetch_assoc();
-} else {
-    echo "Bicicleta não encontrada.";
-}
-$name = $bike['name'];
-
-$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMC Kaius</title>
+    <title>Favourites Motion Bikes</title>
     <link rel="icon" type="image/svg+xml" sizes="40x40" href="img/logo1.jpeg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="Style/sheet.css" media="screen" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-</head>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 20px 0;
+        color: #555;
+    }
+
+    .favorites-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .favorite-item {
+        border: 1px solid #e0e0e0;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: box-shadow 0.3s;
+        background-color: #fff;
+    }
+
+    .favorite-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-info h3 {
+        margin: 0 0 10px;
+        color: #333;
+    }
+
+    .item-info p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .item-actions {
+        margin-left: 20px;
+    }
+
+    .item-actions button {
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        font-size: 0.9rem;
+    }
+
+    .item-actions button:hover {
+        background-color: #e64a19;
+        transform: scale(1.05);
+    }
+
+    .empty-message {
+        text-align: center;
+        font-size: 1.1rem;
+        color: #777;
+    }
+    </style>
+  </head>
 <body>
 <nav class="navbar navbar-dark bg-dark rounded shadow-lg">
   <div class="container-fluid">
@@ -153,169 +269,30 @@ $conn->close();
   </div>
 </nav>
 
-<div class="row g-0 bg-body-secondary position-relative">
-    <div class="col-md-6 mb-md-0 p-md-4">
-        <div id="carouselExampleDark" class="carousel carousel-dark slide img-fluid" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active" data-bs-interval="10000">
-                    <img src="//us.bmc-switzerland.com/cdn/shop/files/f4e0d977-3c3c-42fd-9e94-1055a15c657f_1800x1800.jpg?v=1731409225" class="d-block w-100 rounded-1" alt="...">
+<h1>My Favourites</h1>
+<div class="favorites-container">
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="favorite-item">
+                <div class="item-info">
+                    <h3><?php echo htmlspecialchars($row['name']); ?></h3>
+                    <p><strong>Brand:</strong> <?php echo htmlspecialchars($row['brand']); ?></p>
+                    <p><strong>Type:</strong> <?php echo htmlspecialchars($row['typeB']); ?></p>
+                    <p><strong>Price:</strong> €<?php echo htmlspecialchars($row['price']); ?></p>
                 </div>
-                <div class="carousel-item" data-bs-interval="2000">
-                    <img src="//us.bmc-switzerland.com/cdn/shop/files/b30f900d-ea14-474c-8f07-be10575d7944_1800x1800.jpg?v=1731409226" class="d-block w-100 rounded-1" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="//us.bmc-switzerland.com/cdn/shop/files/c13ca821-dd67-4375-a6f2-7dccb1eddcd7_1800x1800.jpg?v=1731409224" class="d-block w-100 rounded-1" alt="...">
-                </div>
-            </div>
-            <!-- Controles do Carousel -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="col-md-6 p-4 ps-md-0">
-        <h3 class="mt-0 mt-2"><?= $name?></h3>
-
-        <div class="d-flex flex-wrap align-items-center gap-4 ms-2 mt-4">
-          <div class="price-section">
-              <h3><strong>6.700,00 €</strong></h3>
-          </div>
-        <!-- Formulário de Adicionar ao Carrinho -->
-        <form method="POST" action="Cart.php" class="d-flex flex-column flex-md-row align-items-center gap-2 mb-2">
-            <input type="hidden" name="idBike" value="<?= $idBike ?>">
-
-            <!-- Campo para selecionar a quantidade -->
-            <input 
-                type="number" 
-                name="quantidade" 
-                value="1" 
-                min="1" 
-                class="form-control w-auto text-center" 
-                style="max-width: 80px;" 
-            >
-
-            <!-- Botão de Adicionar ao Carrinho -->
-            <button type="submit" class="btn btn-outline-success" name="add_to_cart">
-                <i class="ph ph-shopping-cart"></i>ADD TO CART</button>
-        </form>
-        <!-- Botão de Adicionar ao favorito -->
-      <form method="POST" action="Favourites.php" class="d-flex flex-column flex-md-row align-items-center gap-2 mb-2">
-        <input type="hidden" name="idBike" value="<?= $idBike ?>">
-        <button type="submit" class="btn border-0 bg-transparent fs-4 text-danger" name="add_to_fav">
-          <i class="ph-bold ph-heart-straight"></i></button>
-      </form>
-
-        <!-- Accordion Ajustado -->
-        <div class="accordion" id="accordionExample">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button btn btn-dark focus-ring focus-ring-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Details
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                    <div class="accordion-body overflow-auto">
-                        <p><strong>Key Features</strong></p>
-                        <p>Kaius 01 THREE brings gravel racing to its peak. Equipped with Shimano GRX Di2 and our CG 40 SL carbon wheels, it's built for tough terrains and podium finishes.
-                        </p>
-                    </div>
-                </div>
-            <!-- Mais Seções do Accordion -->
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed btn btn-dark focus-ring focus-ring-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Tecnical Information
-                    </button>
-                </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="accordion-body overflow-auto">
-                        <p><strong>Frame</strong></p> 
-                        <p>Aerolight Disc ACR Carbon Monocoque</p>
-                        <hr>
-                        <p><strong>Fork</strong></p>
-                        <p>Aerolight, Integrated Tapered Full Carbon 1.5"</p>
-                        <hr>
-                        <p><strong>Drivetrain</strong></p>  
-                        <p><strong>Shifters</strong></p> 
-                        <p>Shimano Ultegra DI2 Hydra</p>  
-                        <p><strong>Rear Derailleur</strong></p>
-                        <p>Shimano Ultegra DI2 8150 12sp</p>
-                        <p><strong>Front Derailleur</strong></p>
-                        <p>Shimano Ultegra DI2 8150</p>
-                        <p><strong>Crankset</strong></p>
-                        <p>Shimano Ultegra FCR8100 52/36</p>
-                        <p><strong>Cassette</strong></p>
-                        <p>Shimano Ultegra 11/34</p>
-                        <p><strong>Chain</strong></p>
-                        <p>Shimano Ultegra</p>
-                        <hr>
-                        <p><strong>Brakes</strong></p>
-                        <p><strong>Front Brake</strong></p>
-                        <p>Shimano Ultegra Hydraulic</p>
-                        <p><strong>Rear Brake</strong></p>
-                        <p>Shimano Ultegra Hydraulic</p>
-                        <hr>
-                        <p><strong>Wheelset</strong></p>
-                        <p>Vision SC60</p>
-                        <hr>
-                        <p><strong>Tires</strong></p>
-                        <p>Pirelli Pzero Race 700x28</p>
-                    </div>
+                <div class="item-actions">
+                    <form method="post" action="Favourites.php">
+                        <input type="hidden" name="idBike" value="<?php echo $row['idBike']; ?>">
+                        <button type="submit" name="remove_item">Remove</button>
+                    </form>
                 </div>
             </div>
-
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed btn btn-dark focus-ring focus-ring-secondary"
-                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                        aria-expanded="false" aria-controls="collapseThree">
-                        Reviews
-                    </button>
-                </h2>
-                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="accordion-body overflow-auto">
-                        <strong>Top Reviews</strong>
-                        <p></p>
-                        <p>
-                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
-                                alt="user-male-circle" />
-                            <strong>Kevin</strong> : I would say for anyone who is building, definitely look into
-                            these gpu's!! The one I brought let me play any game FLAWLESSLY with 0 lag and around
-                            200-160 fps which isn’t too shabby considering the monitor I use most has only 144 hz.
-                        </p>
-
-                        <hr>
-                        <p>
-                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
-                                alt="user-male-circle" />
-                            <strong>Anthony</strong> : fast shipping, i upgraded to this from an Asus phoenix 3050
-                            oc and its a world of difference! runs really well, much cooler than my previous gpu.
-                            would recommend
-                        </p>
-
-                        <hr>
-                        <p>
-                            <img width="30" height="30" src="https://img.icons8.com/windows/32/user-male-circle.png"
-                                alt="user-male-circle" />
-                            <strong>LeoFer</strong> : fast shipping, met my expectations fully. I was replacing a
-                            2070 card that appeared overwhelmed by newer gaming requirements and was degrading game
-                            performance. The change solved my issues as expected. The price was good and delivery on
-                            time.
-                        </p>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p class="empty-message">You don't have any favourites yet.</p>
+    <?php endif; ?>
 </div>
+
 
 <footer> 
   <div class="hstack text-center">

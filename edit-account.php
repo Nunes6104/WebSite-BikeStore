@@ -89,11 +89,33 @@ $conn = null; // Fecha a conexão com a base de dados
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
       .card {
-            margin-top: 50px;
-            margin-bottom: 50px;
-            background-color:rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+    margin-top: 50px;
+    margin-bottom: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.table th, .table td {
+    text-align: center;
+    color: white;
+    background-color: rgba(50, 45, 45, 0.5);
+}
+h1 {
+    margin-top: 20px;
+    font-size: 2.5rem;
+    text-align: center;
+    color: white;
+}
+.password-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: max-content;
+}
+.password-container input {
+    flex: 1;
+}
+.password-container button {
+    margin-left: 5px;
+}
     </style>
 </head>
 <body>
